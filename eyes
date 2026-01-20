@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Eye Crop + Pupil Hough + Classification</title>
+
+<!-- MediaPipe FaceMesh -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+
+<!-- OpenCV.js -->
+<script src="https://docs.opencv.org/4.x/opencv.js"></script>
+
+<style>
+  body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  .row { display: flex; gap: 20px; }
+  canvas { border: 1px solid #aaa; background: white; }
+  .eye-box { text-align: center; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  
+  /* Result Box Styling */
+  .result-box {
+    margin-top: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .dx-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin: 10px 0;
+  }
+  
+  .classification {
+    font-size: 28px;
+    font-weight: bold;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .exotropia {
+    background: #ffebee;
+    color: #c62828;
+    border: 2px solid #ef5350;
+  }
+  
+  .normal {
+    background: #fff9c4;
+    color: #f57f17;
+    border: 2px solid #ffd93d;
+  }
+  
+  .esotropia {
+    background: #e3f2fd;
+    color: #1565c0;
+    border: 2px solid #1e3a8a;
+  }
+  
+  .threshold-info {
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-size: 14px;
+  }
+  
+  .threshold-info h4 {
+    margin-top: 0;
+    color: #555;
+  }
+  
+  .metric-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-top: 15px;
+  }
+  
+  .metric-card {
+    background: #fafafa;
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+  }
+  
+  .metric-label {
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+  }
+  
+  .metric-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 5px;
+  }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h2>Eye Crop + Pupil Center (Hough) + Classification</h2>
+
+<input type="file" id="imageInput" accept="image/*">
+
+<h3>Cropped Eyes</h3>
+<div class="row">
+  <div class="eye-box">
+    <h4>Left Eye</h4>
+    <canvas id="leftEye"></canvas>
+    <div style="margin-top: 10px;">Normalized X: <strong><span id="leftX">–</span></strong></div>
+  </div>
+  <div class="eye-box">
+    <h4>Right Eye</h4>
+    <canvas id="rightEye"></canvas>
+    <div style="margin-top: 10px;">Normalized X: <strong><span id="rightX">–</span></strong></div>
+  </div>
+</div>
+
+<!-- RESULT BOX -->
+<div class="result-box">
+  <h3>Analysis Results</h3>
+  
+  <div class="metric-row">
+    <div class="metric-card">
+      <div class="metric-label">Left Eye (X)</div>
+      <div class="metric-value" id="leftXResult">–</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Right Eye (X)</div>
+      <div class="metric-value" id="rightXResult">–</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">dx Value</div>
+      <div class="metric-value" id="dxValue">–</div>
+    </div>
+  </div>
+  
+  <div class="classification" id="classification">
+    Waiting for image...
+  </div>
+  
+  <div class="threshold-info">
+    <h4>Threshold Classification Rules:</h4>
+    <p>📍 <strong>dx &lt; -0.0586</strong> → <span style="color: #c62828;">EXOTROPIA</span></p>
+    <p>📍 <strong>-0.0586 ≤ dx &lt; 0.1116</strong> → <span style="color: #f57f17;">NORMAL</span></p>
+    <p>📍 <strong>dx ≥ 0.1116</strong> → <span style="color: #1565c0;">ESOTROPIA</span></p>
+    
+    <div style="margin-top: 10px; font-size: 12px; color: #666;">
+      <em>Based on distribution analysis from training data</em>
+    </div>
+  </div>
+</div>
+
+<h3>Original Image</h3>
+<canvas id="original"></canvas>
+
+</div>
+
+<script>
+/* ---------------- Classification Thresholds ---------------- */
+const THRESHOLD_1 = -0.0586; // exotropia/normal boundary
+const THRESHOLD_2 = 0.1116;  // normal/esotropia boundary
+
+/* ---------------- OpenCV readiness ---------------- */
+let cvReady = false;
+cv.onRuntimeInitialized = () => {
+  cvReady = true;
+  console.log("OpenCV ready");
+};
+
+/* ---------------- DOM ---------------- */
+const imageInput = document.getElementById("imageInput");
+const originalCanvas = document.getElementById("original");
+const leftEyeCanvas = document.getElementById("leftEye");
+const rightEyeCanvas = document.getElementById("rightEye");
+
+const leftXLabel = document.getElementById("leftX");
+const rightXLabel = document.getElementById("rightX");
+
+const leftXResult = document.getElementById("leftXResult");
+const rightXResult = document.getElementById("rightXResult");
+const dxValueLabel = document.getElementById("dxValue");
+const classificationLabel = document.getElementById("classification");
+
+const octx = originalCanvas.getContext("2d");
+const lctx = leftEyeCanvas.getContext("2d");
+const rctx = rightEyeCanvas.getContext("2d");
+
+/* Store normalized X values */
+let leftNormX = null;
+let rightNormX = null;
+
+/* ---------------- FaceMesh ---------------- */
+const faceMesh = new FaceMesh({
+  locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}`
+});
+faceMesh.setOptions({
+  maxNumFaces: 1,
+  refineLandmarks: true
+});
+faceMesh.onResults(onResults);
+
+/* Eye landmark indices */
+const LEFT_EYE = [33,133,160,159,158,157,173];
+const RIGHT_EYE = [362,263,387,386,385,384,398];
+
+/* ---------------- Image upload ---------------- */
+imageInput.onchange = e => {
+  const img = new Image();
+  img.onload = async () => {
+    originalCanvas.width = img.width;
+    originalCanvas.height = img.height;
+    octx.drawImage(img, 0, 0);
+    await faceMesh.send({ image: img });
+  };
+  img.src = URL.createObjectURL(e.target.files[0]);
+};
+
+/* ---------------- Eye crop ---------------- */
+function cropEye(landmarks, indices, src, dst, ctx) {
+  const w = src.width, h = src.height;
+  const xs = indices.map(i => landmarks[i].x * w);
+  const ys = indices.map(i => landmarks[i].y * h);
+
+  const pad = 10;
+  const minX = Math.min(...xs) - pad;
+  const maxX = Math.max(...xs) + pad;
+  const minY = Math.min(...ys) - 2*pad;
+  const maxY = Math.max(...ys) + 4*pad;
+
+  dst.width = maxX - minX;
+  dst.height = maxY - minY;
+
+  ctx.clearRect(0, 0, dst.width, dst.height);
+  ctx.drawImage(
+    src,
+    minX, minY, dst.width, dst.height,
+    0, 0, dst.width, dst.height
+  );
+}
+
+/* ---------------- Pupil detection (Hough) ---------------- */
+function detectPupil(canvas, ctx, label, isLeft) {
+  if (!cvReady || canvas.width === 0) {
+    label.innerText = "–";
+    return null;
+  }
+
+  /* Read canvas → OpenCV */
+  let src = cv.imread(canvas);
+  let gray = new cv.Mat();
+  let circles = new cv.Mat();
+
+  cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+  cv.GaussianBlur(gray, gray, new cv.Size(7, 7), 1.5);
+
+  const minR = Math.round(canvas.width * 0.08);
+  const maxR = Math.round(canvas.width * 0.25);
+
+  cv.HoughCircles(
+    gray,
+    circles,
+    cv.HOUGH_GRADIENT,
+    1.2,
+    gray.rows / 2,
+    100,
+    18,
+    minR,
+    maxR
+  );
+
+  let xNorm = null;
+
+  if (circles.cols > 0) {
+    const x = circles.data32F[0];
+    const y = circles.data32F[1];
+    const r = circles.data32F[2];
+
+    /* redraw eye */
+    ctx.drawImage(canvas, 0, 0);
+
+    /* draw detected circle */
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, 2 * Math.PI);
+    ctx.stroke();
+
+    ctx.fillStyle = "red";
+    ctx.beginPath();
+    ctx.arc(x, y, 2, 0, 2 * Math.PI);
+    ctx.fill();
+
+    /* normalized horizontal position */
+    xNorm = parseFloat((x / canvas.width).toFixed(4));
+    label.innerText = xNorm;
+    
+    // Store value
+    if (isLeft) {
+      leftNormX = xNorm;
+    } else {
+      rightNormX = xNorm;
+    }
+  } else {
+    label.innerText = "not found";
+  }
+
+  src.delete(); gray.delete(); circles.delete();
+  
+  return xNorm;
+}
+
+/* ---------------- Calculate dx and classify ---------------- */
+function calculateAndClassify() {
+  if (leftNormX === null || rightNormX === null) {
+    dxValueLabel.innerText = "–";
+    classificationLabel.innerText = "Cannot detect both pupils";
+    classificationLabel.className = "classification";
+    return;
+  }
+  
+  // Calculate dx = left - right
+  const dx = leftNormX - rightNormX;
+  
+  // Update display
+  leftXResult.innerText = leftNormX.toFixed(4);
+  rightXResult.innerText = rightNormX.toFixed(4);
+  dxValueLabel.innerText = dx.toFixed(4);
+  
+  // Classify based on threshold
+  let classification = "";
+  let className = "classification ";
+  
+  if (dx < THRESHOLD_1) {
+    classification = "🔴 EXOTROPIA";
+    className += "exotropia";
+  } else if (dx < THRESHOLD_2) {
+    classification = "🟡 NORMAL";
+    className += "normal";
+  } else {
+    classification = "🔵 ESOTROPIA";
+    className += "esotropia";
+  }
+  
+  classificationLabel.innerText = classification;
+  classificationLabel.className = className;
+  
+  // Log results
+  console.log("=".repeat(50));
+  console.log("CLASSIFICATION RESULTS");
+  console.log("=".repeat(50));
+  console.log(`Left Eye (Normalized X):  ${leftNormX.toFixed(4)}`);
+  console.log(`Right Eye (Normalized X): ${rightNormX.toFixed(4)}`);
+  console.log(`dx (Left - Right):        ${dx.toFixed(4)}`);
+  console.log(`Classification:           ${classification}`);
+  console.log("=".repeat(50));
+}
+
+/* ---------------- FaceMesh callback ---------------- */
+function onResults(res) {
+  if (!res.multiFaceLandmarks) return;
+
+  const lm = res.multiFaceLandmarks[0];
+
+  cropEye(lm, LEFT_EYE, originalCanvas, leftEyeCanvas, lctx);
+  cropEye(lm, RIGHT_EYE, originalCanvas, rightEyeCanvas, rctx);
+
+  detectPupil(leftEyeCanvas, lctx, leftXLabel, true);
+  detectPupil(rightEyeCanvas, rctx, rightXLabel, false);
+  
+  // Calculate dx and classify after both eyes are detected
+  calculateAndClassify();
+}
+</script>
+
+</body>
+</html>
