@@ -19,8 +19,6 @@
     --surface2: #1e2230;
     --border: #2a2f42;
     --accent: #4fffb0;
-    --accent2: #ff6b6b;
-    --accent3: #6b9fff;
     --text: #e8eaf2;
     --muted: #6b7394;
     --exo: #ff6b6b;
@@ -40,7 +38,6 @@
     padding: 40px 24px;
   }
 
-  /* noise overlay */
   body::before {
     content: '';
     position: fixed;
@@ -52,7 +49,6 @@
 
   .container { max-width: 960px; margin: 0 auto; position: relative; z-index: 1; }
 
-  /* Header */
   header { margin-bottom: 40px; }
   .badge {
     display: inline-block;
@@ -66,23 +62,10 @@
     margin-bottom: 14px;
     text-transform: uppercase;
   }
-  h1 {
-    font-size: clamp(28px, 5vw, 42px);
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-  }
+  h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
   h1 span { color: var(--accent); }
-  .subtitle {
-    margin-top: 10px;
-    color: var(--muted);
-    font-size: 14px;
-    font-weight: 400;
-    max-width: 520px;
-    line-height: 1.6;
-  }
+  .subtitle { margin-top: 10px; color: var(--muted); font-size: 14px; max-width: 520px; line-height: 1.6; }
 
-  /* Upload zone */
   .upload-zone {
     border: 2px dashed var(--border);
     border-radius: 12px;
@@ -99,245 +82,98 @@
   .upload-zone.active { border-color: var(--accent); background: rgba(79,255,176,0.04); }
   .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
   .upload-icon { font-size: 32px; margin-bottom: 10px; }
-  .upload-text { font-size: 15px; font-weight: 600; color: var(--text); }
+  .upload-text { font-size: 15px; font-weight: 600; }
   .upload-sub { font-size: 12px; color: var(--muted); margin-top: 4px; font-family: 'DM Mono', monospace; }
 
-  /* Image preview */
   #preview-section { display: none; margin-bottom: 28px; }
-  .preview-wrap {
-    position: relative;
-    border-radius: 10px;
-    overflow: hidden;
-    background: var(--surface);
-    border: 1px solid var(--border);
-  }
-  #previewCanvas {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-height: 480px;
-    object-fit: contain;
-  }
+  .preview-wrap { position: relative; border-radius: 10px; overflow: hidden; background: var(--surface); border: 1px solid var(--border); }
+  #previewCanvas { display: block; width: 100%; height: auto; max-height: 480px; object-fit: contain; }
+
   .processing-overlay {
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     background: rgba(13,15,20,0.75);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-family: 'DM Mono', monospace;
-    color: var(--accent);
-    letter-spacing: 0.08em;
+    align-items: center; justify-content: center;
+    font-size: 14px; font-family: 'DM Mono', monospace;
+    color: var(--accent); letter-spacing: 0.08em;
     display: none;
   }
   .processing-overlay.show { display: flex; }
   .spinner {
     width: 20px; height: 20px;
-    border: 2px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin-right: 12px;
+    border: 2px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 12px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Results grid */
   #results-section { display: none; }
 
-  .results-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-
+  .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
   @media (max-width: 600px) { .results-grid { grid-template-columns: 1fr; } }
 
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-  }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+  .card-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; }
 
-  .card-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
+  .metric-row { display: flex; gap: 12px; }
+  .metric { flex: 1; background: var(--surface2); border-radius: 6px; padding: 12px; text-align: center; }
+  .metric-name { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 6px; }
+  .metric-val { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; color: var(--text); }
 
-  .metric-row {
-    display: flex;
-    gap: 12px;
-  }
-
-  .metric {
-    flex: 1;
-    background: var(--surface2);
-    border-radius: 6px;
-    padding: 12px;
-    text-align: center;
-  }
-
-  .metric-name {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    margin-bottom: 6px;
-  }
-
-  .metric-val {
-    font-family: 'DM Mono', monospace;
-    font-size: 20px;
-    font-weight: 500;
-    color: var(--text);
-  }
-
-  /* Classification card */
   .classify-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 24px 28px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 24px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px 28px; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 24px;
   }
-
   .classify-icon { font-size: 36px; flex-shrink: 0; }
+  .classify-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
+  .classify-result { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; }
+  .classify-desc { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
 
-  .classify-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .classify-result {
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-  }
-
-  .classify-desc {
-    font-size: 13px;
-    color: var(--muted);
-    margin-top: 4px;
-    line-height: 1.5;
-  }
-
-  .classify-card.exo  { border-color: var(--exo);    }
-  .classify-card.norm { border-color: var(--normal);  }
-  .classify-card.eso  { border-color: var(--eso);     }
-  .classify-card.hyper{ border-color: var(--hyper);   }
-  .classify-card.hypo { border-color: var(--hypo);    }
-  .classify-card.err  { border-color: var(--muted);   }
+  .classify-card.exo   { border-color: var(--exo);    }
+  .classify-card.norm  { border-color: var(--normal);  }
+  .classify-card.eso   { border-color: var(--eso);     }
+  .classify-card.hyper { border-color: var(--hyper);   }
+  .classify-card.hypo  { border-color: var(--hypo);    }
 
   .result-exo   { color: var(--exo);    }
   .result-norm  { color: var(--normal); }
   .result-eso   { color: var(--eso);    }
   .result-hyper { color: var(--hyper);  }
   .result-hypo  { color: var(--hypo);   }
-  .result-err   { color: var(--muted);  }
 
-  /* Threshold table */
-  .thresh-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 16px;
+  /* Rotation info card */
+  .rot-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 20px; margin-bottom: 16px;
+    font-family: 'DM Mono', monospace; font-size: 12px;
   }
+  .rot-card .card-label { margin-bottom: 8px; }
+  .rot-val { color: var(--accent); font-size: 14px; font-weight: 500; }
 
-  .thresh-title {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-  }
-
-  .thresh-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-    font-family: 'DM Mono', monospace;
-  }
-
+  .thresh-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+  .thresh-title { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; margin-bottom: 14px; }
+  .thresh-section-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); margin: 12px 0 6px; }
+  .thresh-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; font-family: 'DM Mono', monospace; }
   .thresh-row:last-child { border-bottom: none; }
-
-  .thresh-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
+  .thresh-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .thresh-rule { color: var(--muted); flex: 1; }
   .thresh-class { font-weight: 500; }
 
-  /* Landmark info */
-  .lm-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-  }
-
-  .lm-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 12px;
-  }
-
-  .lm-item {
-    background: var(--surface2);
-    border-radius: 6px;
-    padding: 10px 12px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-  }
-
+  .lm-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+  .lm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .lm-item { background: var(--surface2); border-radius: 6px; padding: 10px 12px; font-family: 'DM Mono', monospace; font-size: 11px; }
   .lm-eye { color: var(--muted); font-size: 10px; margin-bottom: 4px; }
-  .lm-vals { color: var(--text); }
 
-  /* Error banner */
   .error-banner {
-    background: rgba(255,107,107,0.08);
-    border: 1px solid var(--exo);
-    border-radius: 8px;
-    padding: 14px 18px;
-    font-size: 13px;
-    color: var(--exo);
-    font-family: 'DM Mono', monospace;
-    display: none;
-    margin-bottom: 16px;
+    background: rgba(255,107,107,0.08); border: 1px solid var(--exo);
+    border-radius: 8px; padding: 14px 18px; font-size: 13px;
+    color: var(--exo); font-family: 'DM Mono', monospace; display: none; margin-bottom: 16px;
   }
   .error-banner.show { display: block; }
 
-  /* Reset btn */
   .reset-btn {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-    margin-top: 8px;
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+    font-family: 'Syne', sans-serif; font-size: 13px; padding: 10px 20px;
+    border-radius: 6px; cursor: pointer; transition: border-color 0.2s, color 0.2s; margin-top: 8px;
   }
   .reset-btn:hover { border-color: var(--text); color: var(--text); }
 </style>
@@ -350,13 +186,12 @@
     <div class="badge">Computer Vision · Strabismus Screening</div>
     <h1>Ocular Deviation<br><span>Detection System</span></h1>
     <p class="subtitle">
-      Upload a frontal facial image. MediaPipe Face Mesh extracts iris landmarks
-      to compute normalized horizontal and vertical deviation parameters for
-      strabismus classification.
+      Upload a frontal facial image. Landmarks are extracted via MediaPipe Face Mesh,
+      corrected for head tilt using an affine rotation matrix, then classified
+      using statistical thresholds for horizontal and vertical deviation.
     </p>
   </header>
 
-  <!-- Upload -->
   <div class="upload-zone" id="uploadZone">
     <input type="file" id="imageInput" accept="image/*">
     <div class="upload-icon">📁</div>
@@ -364,7 +199,6 @@
     <div class="upload-sub">JPG, PNG, WEBP — frontal face preferred</div>
   </div>
 
-  <!-- Preview + overlay -->
   <div id="preview-section">
     <div class="preview-wrap">
       <canvas id="previewCanvas"></canvas>
@@ -376,19 +210,17 @@
     <button class="reset-btn" id="resetBtn">↺ Upload new image</button>
   </div>
 
-  <!-- Error -->
   <div class="error-banner" id="errorBanner"></div>
 
-  <!-- Results -->
   <div id="results-section">
 
-    <!-- Classification -->
+    <!-- Horizontal classification -->
     <div class="classify-card" id="classifyCard">
       <div class="classify-icon" id="classifyIcon">–</div>
       <div>
         <div class="classify-label">Horizontal Classification</div>
         <div class="classify-result" id="classifyResult">–</div>
-        <div class="classify-desc" id="classifyDesc">–</div>
+        <div class="classify-desc"  id="classifyDesc">–</div>
       </div>
     </div>
 
@@ -398,21 +230,30 @@
       <div>
         <div class="classify-label">Vertical Classification</div>
         <div class="classify-result" id="classifyResultV">–</div>
-        <div class="classify-desc" id="classifyDescV">–</div>
+        <div class="classify-desc"  id="classifyDescV">–</div>
       </div>
     </div>
 
-    <!-- Metrics -->
+    <!-- Rotation info -->
+    <div class="rot-card">
+      <div class="card-label">Rotation Correction</div>
+      <span class="rot-val" id="thetaVal">–</span>
+      <span style="color:var(--muted); font-size:11px; margin-left:8px;">
+        θ applied to all landmark coordinates before parameter computation
+      </span>
+    </div>
+
+    <!-- Deviation metrics -->
     <div class="results-grid">
       <div class="card">
         <div class="card-label">Horizontal Deviation (dx_norm)</div>
         <div class="metric-row">
           <div class="metric">
-            <div class="metric-name">Left norm_x</div>
+            <div class="metric-name">left_norm_x</div>
             <div class="metric-val" id="leftVal">–</div>
           </div>
           <div class="metric">
-            <div class="metric-name">Right norm_x</div>
+            <div class="metric-name">right_norm_x</div>
             <div class="metric-val" id="rightVal">–</div>
           </div>
           <div class="metric">
@@ -426,12 +267,12 @@
         <div class="card-label">Vertical Deviation (|dy_norm|)</div>
         <div class="metric-row">
           <div class="metric">
-            <div class="metric-name">Left pupil_y</div>
-            <div class="metric-val" id="leftPy">–</div>
+            <div class="metric-name">dy (px·norm)</div>
+            <div class="metric-val" id="dyRaw">–</div>
           </div>
           <div class="metric">
-            <div class="metric-name">Right pupil_y</div>
-            <div class="metric-val" id="rightPy">–</div>
+            <div class="metric-name">y_ref</div>
+            <div class="metric-val" id="yRef">–</div>
           </div>
           <div class="metric">
             <div class="metric-name">|dy_norm|</div>
@@ -441,17 +282,17 @@
       </div>
     </div>
 
-    <!-- Landmark coords -->
+    <!-- Rotated landmark coords -->
     <div class="lm-card" style="margin-bottom:16px;">
-      <div class="card-label">Extracted Landmark Coordinates (normalised)</div>
+      <div class="card-label">Rotated Landmark Coordinates (image px, post-correction)</div>
       <div class="lm-grid">
         <div class="lm-item">
-          <div class="lm-eye">LEFT EYE</div>
-          <div class="lm-vals" id="lmLeft">–</div>
+          <div class="lm-eye">LEFT EYE (rotated)</div>
+          <div id="lmLeft">–</div>
         </div>
         <div class="lm-item">
-          <div class="lm-eye">RIGHT EYE</div>
-          <div class="lm-vals" id="lmRight">–</div>
+          <div class="lm-eye">RIGHT EYE (rotated)</div>
+          <div id="lmRight">–</div>
         </div>
       </div>
     </div>
@@ -460,9 +301,7 @@
     <div class="thresh-card">
       <div class="thresh-title">Classification Rules</div>
 
-      <div style="margin-bottom:8px; font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);">
-        HORIZONTAL (dx_norm)
-      </div>
+      <div class="thresh-section-label">HORIZONTAL (dx_norm)</div>
       <div class="thresh-row">
         <div class="thresh-dot" style="background:var(--exo)"></div>
         <div class="thresh-rule">dx_norm &lt; -0.1519</div>
@@ -473,15 +312,13 @@
         <div class="thresh-rule">-0.1519 ≤ dx_norm ≤ 0.0484</div>
         <div class="thresh-class result-norm">Normal</div>
       </div>
-      <div class="thresh-row" style="margin-bottom:14px">
+      <div class="thresh-row">
         <div class="thresh-dot" style="background:var(--eso)"></div>
         <div class="thresh-rule">dx_norm &gt; 0.0484</div>
         <div class="thresh-class result-eso">Esotropia</div>
       </div>
 
-      <div style="margin-top:14px; margin-bottom:8px; font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);">
-        VERTICAL (|dy_norm|)
-      </div>
+      <div class="thresh-section-label">VERTICAL (|dy_norm|)</div>
       <div class="thresh-row">
         <div class="thresh-dot" style="background:var(--normal)"></div>
         <div class="thresh-rule">|dy_norm| ≤ 0.1160</div>
@@ -489,61 +326,79 @@
       </div>
       <div class="thresh-row">
         <div class="thresh-dot" style="background:var(--hyper)"></div>
-        <div class="thresh-rule">|dy_norm| &gt; 0.1160 and left pupil lower</div>
+        <div class="thresh-rule">|dy_norm| &gt; 0.1160 and dy &gt; 0</div>
         <div class="thresh-class result-hyper">Hypertropia</div>
       </div>
       <div class="thresh-row">
         <div class="thresh-dot" style="background:var(--hypo)"></div>
-        <div class="thresh-rule">|dy_norm| &gt; 0.1160 and right pupil lower</div>
+        <div class="thresh-rule">|dy_norm| &gt; 0.1160 and dy &lt; 0</div>
         <div class="thresh-class result-hypo">Hypotropia</div>
       </div>
     </div>
 
   </div><!-- /results-section -->
-
 </div><!-- /container -->
 
 <script>
 /* ================================================================
-   LANDMARK INDICES — MediaPipe Face Mesh (refine_landmarks = true)
-   478 total landmarks when refineLandmarks: true
+   LANDMARK INDICES — MediaPipe Face Mesh (refineLandmarks: true)
+   Total 478 landmarks. Iris centres at 468 (left) and 473 (right).
 
-   Eye corners (from standard 468 set):
-     Left  outer canthus : 33
-     Left  inner canthus : 133
-     Left  upper lid     : 159
-     Left  lower lid     : 145
-
-     Right outer canthus : 263
-     Right inner canthus : 362
-     Right upper lid     : 386
-     Right lower lid     : 374
-
-   Iris centres (from refined 10 extra points, indices 468–477):
-     Left  iris centre   : 468
-     Right iris centre   : 473
+   Corresponds to offline Python annotation:
+     L_outer → 33   | R_outer → 263
+     L_inner → 133  | R_inner → 362
+     L_upper → 159  | R_upper → 386
+     L_lower → 145  | R_lower → 374
+     L_pupil → 468  | R_pupil → 473  (iris centre, needs refineLandmarks)
 ================================================================ */
-
 const IDX = {
-  L_outer : 33,
-  L_inner : 133,
-  L_upper : 159,
-  L_lower : 145,
-  L_pupil : 468,   // iris centre — only available when refineLandmarks: true
-
-  R_outer : 263,
-  R_inner : 362,
-  R_upper : 386,
-  R_lower : 374,
-  R_pupil : 473,   // iris centre — only available when refineLandmarks: true
+  L_outer: 33,  L_inner: 133, L_upper: 159, L_lower: 145, L_pupil: 468,
+  R_outer: 263, R_inner: 362, R_upper: 386, R_lower: 374, R_pupil: 473,
 };
 
 /* ================================================================
-   THRESHOLDS (from offline Gaussian/Gamma log-likelihood analysis)
+   THRESHOLDS — derived from offline Gaussian / Gamma log-likelihood
 ================================================================ */
-const T1_DX = -0.1519;   // Exotropia / Normal boundary
-const T2_DX =  0.0484;   // Normal / Esotropia boundary
-const T_DY  =  0.1160;   // Normal / Vertical strabismus boundary
+const T1_DX = -0.1519;   // Exotropia | Normal
+const T2_DX =  0.0484;   // Normal    | Esotropia
+const T_DY  =  0.1160;   // Normal    | Vertical strabismus
+
+/* ================================================================
+   ROTATION HELPERS
+   Mirrors the Python offline pipeline:
+
+     theta = atan2(R_outer.y - L_outer.y, R_outer.x - L_outer.x)
+     M     = 2×3 affine rotation matrix around image centre
+     p_rot = M · [px, py, 1]^T
+================================================================ */
+
+/**
+ * Build a 2×3 affine rotation matrix (same as cv2.getRotationMatrix2D).
+ * angle in radians, cx/cy = image centre in normalised [0,1] coords.
+ */
+function buildRotationMatrix(angle, cx, cy) {
+  const cos = Math.cos(-angle);   // negative: we counter-rotate
+  const sin = Math.sin(-angle);
+  // M = [ cos  -sin  tx ]
+  //     [ sin   cos  ty ]
+  // tx = (1-cos)*cx + sin*cy
+  // ty = -sin*cx + (1-cos)*cy
+  return [
+    [ cos, -sin, (1 - cos) * cx + sin * cy ],
+    [ sin,  cos, -sin * cx + (1 - cos) * cy ],
+  ];
+}
+
+/**
+ * Apply 2×3 affine matrix M to point (px, py).
+ * Returns { x, y } in the same coordinate space.
+ */
+function rotatePoint(px, py, M) {
+  return {
+    x: M[0][0] * px + M[0][1] * py + M[0][2],
+    y: M[1][0] * px + M[1][1] * py + M[1][2],
+  };
+}
 
 /* ================================================================
    MEDIAPIPE SETUP
@@ -551,27 +406,28 @@ const T_DY  =  0.1160;   // Normal / Vertical strabismus boundary
 const faceMesh = new FaceMesh({
   locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}`
 });
-
 faceMesh.setOptions({
-  maxNumFaces      : 1,
-  refineLandmarks  : true,   // REQUIRED for iris landmarks (468–477)
-  minDetectionConfidence : 0.5,
-  minTrackingConfidence  : 0.5
+  maxNumFaces: 1,
+  refineLandmarks: true,           // required for iris centres 468 / 473
+  minDetectionConfidence: 0.5,
+  minTrackingConfidence: 0.5,
 });
-
 faceMesh.onResults(onResults);
 
 /* ================================================================
    DOM REFS
 ================================================================ */
-const imageInput       = document.getElementById('imageInput');
-const uploadZone       = document.getElementById('uploadZone');
-const previewSection   = document.getElementById('preview-section');
-const previewCanvas    = document.getElementById('previewCanvas');
-const processingOverlay= document.getElementById('processingOverlay');
-const resultsSection   = document.getElementById('results-section');
-const errorBanner      = document.getElementById('errorBanner');
-const resetBtn         = document.getElementById('resetBtn');
+const imageInput        = document.getElementById('imageInput');
+const uploadZone        = document.getElementById('uploadZone');
+const previewSection    = document.getElementById('preview-section');
+const previewCanvas     = document.getElementById('previewCanvas');
+const processingOverlay = document.getElementById('processingOverlay');
+const resultsSection    = document.getElementById('results-section');
+const errorBanner       = document.getElementById('errorBanner');
+const resetBtn          = document.getElementById('resetBtn');
+
+/* keep original image for redraw */
+let originalImage = null;
 
 /* ================================================================
    IMAGE UPLOAD
@@ -579,39 +435,31 @@ const resetBtn         = document.getElementById('resetBtn');
 imageInput.addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
-
   const img = new Image();
   img.onload = async () => {
-    // show preview
+    originalImage = img;
     previewCanvas.width  = img.naturalWidth;
     previewCanvas.height = img.naturalHeight;
-    const ctx = previewCanvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
+    previewCanvas.getContext('2d').drawImage(img, 0, 0);
 
-    uploadZone.style.display    = 'none';
+    uploadZone.style.display     = 'none';
     previewSection.style.display = 'block';
     resultsSection.style.display = 'none';
     errorBanner.classList.remove('show');
     processingOverlay.classList.add('show');
 
-    // send to FaceMesh
     await faceMesh.send({ image: img });
   };
   img.src = URL.createObjectURL(file);
 });
 
-uploadZone.addEventListener('dragover', e => {
-  e.preventDefault();
-  uploadZone.classList.add('active');
-});
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('active'); });
 uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('active'));
 uploadZone.addEventListener('drop', e => {
-  e.preventDefault();
-  uploadZone.classList.remove('active');
+  e.preventDefault(); uploadZone.classList.remove('active');
   const file = e.dataTransfer.files[0];
   if (file && file.type.startsWith('image/')) {
-    const dt = new DataTransfer();
-    dt.items.add(file);
+    const dt = new DataTransfer(); dt.items.add(file);
     imageInput.files = dt.files;
     imageInput.dispatchEvent(new Event('change'));
   }
@@ -623,6 +471,7 @@ resetBtn.addEventListener('click', () => {
   resultsSection.style.display = 'none';
   errorBanner.classList.remove('show');
   imageInput.value = '';
+  originalImage = null;
 });
 
 /* ================================================================
@@ -637,179 +486,197 @@ function onResults(results) {
   }
 
   const lm = results.multiFaceLandmarks[0];
-
-  // Sanity-check: refined landmarks must be present (478 total)
   if (lm.length < 478) {
-    showError('Iris landmarks unavailable. Ensure the image shows both eyes clearly.');
+    showError('Iris landmarks unavailable (need refineLandmarks). Ensure both eyes are visible.');
     return;
   }
 
-  // --- Extract landmark coordinates (normalised 0–1) ---
-  const L_outer = lm[IDX.L_outer];
-  const L_inner = lm[IDX.L_inner];
-  const L_upper = lm[IDX.L_upper];
-  const L_lower = lm[IDX.L_lower];
-  const L_pupil = lm[IDX.L_pupil];
+  /* ── Step 1: Extract raw normalised landmark coordinates ──────── */
+  const raw = {
+    L_outer: lm[IDX.L_outer], L_inner: lm[IDX.L_inner],
+    L_upper: lm[IDX.L_upper], L_lower: lm[IDX.L_lower],
+    L_pupil: lm[IDX.L_pupil],
+    R_outer: lm[IDX.R_outer], R_inner: lm[IDX.R_inner],
+    R_upper: lm[IDX.R_upper], R_lower: lm[IDX.R_lower],
+    R_pupil: lm[IDX.R_pupil],
+  };
 
-  const R_outer = lm[IDX.R_outer];
-  const R_inner = lm[IDX.R_inner];
-  const R_upper = lm[IDX.R_upper];
-  const R_lower = lm[IDX.R_lower];
-  const R_pupil = lm[IDX.R_pupil];
+  /* ── Step 2: Compute head tilt angle θ ───────────────────────── */
+  // theta = atan2(R_outer.y - L_outer.y, R_outer.x - L_outer.x)
+  // Coordinates are normalised [0,1]; rotation centre = image centre (0.5, 0.5)
+  const theta = Math.atan2(
+    raw.R_outer.y - raw.L_outer.y,
+    raw.R_outer.x - raw.L_outer.x
+  );
+  const thetaDeg = theta * 180 / Math.PI;
 
-  /* -------------------------------------------------------
-     dx_norm — same formula as offline Python pipeline:
+  /* ── Step 3: Build rotation matrix & rotate all landmarks ─────── */
+  const M = buildRotationMatrix(theta, 0.5, 0.5);
+
+  const r = {};
+  for (const key of Object.keys(raw)) {
+    r[key] = rotatePoint(raw[key].x, raw[key].y, M);
+  }
+  // r.* now holds rotation-corrected normalised coordinates
+
+  /* ── Step 4: Compute dx_norm (horizontal) ──────────────────────
+     Mirrors compute_features() in Python:
        left_norm_x  = (L_pupil.x - L_outer.x) / (L_inner.x - L_outer.x)
        right_norm_x = (R_pupil.x - R_inner.x) / (R_outer.x - R_inner.x)
        dx_norm      = left_norm_x - right_norm_x
-  ------------------------------------------------------- */
-  const eye_width_L = L_inner.x - L_outer.x;
-  const eye_width_R = R_outer.x - R_inner.x;
-
-  const left_norm_x  = (L_pupil.x - L_outer.x) / eye_width_L;
-  const right_norm_x = (R_pupil.x - R_inner.x) / eye_width_R;
+  ─────────────────────────────────────────────────────────────── */
+  const eye_width_L  = r.L_inner.x - r.L_outer.x;
+  const eye_width_R  = r.R_outer.x - r.R_inner.x;
+  const left_norm_x  = (r.L_pupil.x - r.L_outer.x) / eye_width_L;
+  const right_norm_x = (r.R_pupil.x - r.R_inner.x) / eye_width_R;
   const dx_norm      = left_norm_x - right_norm_x;
 
-  /* -------------------------------------------------------
-     dy_norm — same formula as offline Python pipeline:
+  /* ── Step 5: Compute dy_norm (vertical) ────────────────────────
+     Mirrors compute_vertical_feature() in Python:
        dist_L = |L_pupil.y - L_outer.y|
        dist_R = |R_pupil.y - R_outer.y|
        if dist_L < dist_R: dy = R_pupil.y - L_pupil.y
        else:               dy = L_pupil.y - R_pupil.y
        y_ref   = ((L_lower.y - L_upper.y) + (R_lower.y - R_upper.y)) / 2
        dy_norm = dy / y_ref
-  ------------------------------------------------------- */
-  const dist_L = Math.abs(L_pupil.y - L_outer.y);
-  const dist_R = Math.abs(R_pupil.y - R_outer.y);
+  ─────────────────────────────────────────────────────────────── */
+  const dist_L = Math.abs(r.L_pupil.y - r.L_outer.y);
+  const dist_R = Math.abs(r.R_pupil.y - r.R_outer.y);
   const dy     = dist_L < dist_R
-                   ? R_pupil.y - L_pupil.y
-                   : L_pupil.y - R_pupil.y;
-  const y_ref  = ((L_lower.y - L_upper.y) + (R_lower.y - R_upper.y)) / 2;
+                   ? r.R_pupil.y - r.L_pupil.y
+                   : r.L_pupil.y - r.R_pupil.y;
+  const y_ref  = ((r.L_lower.y - r.L_upper.y) + (r.R_lower.y - r.R_upper.y)) / 2;
   const dy_norm = dy / y_ref;
   const abs_dy  = Math.abs(dy_norm);
 
-  /* -------------------------------------------------------
-     HORIZONTAL CLASSIFICATION
-  ------------------------------------------------------- */
-  let hClass, hIcon, hDesc, hCardClass, hResultClass;
+  /* ── Step 6: Horizontal classification ─────────────────────── */
+  let hClass, hIcon, hDesc, hCardCls, hResCls;
   if (dx_norm < T1_DX) {
-    hClass = 'EXOTROPIA';   hIcon = '👁️';
+    hClass = 'EXOTROPIA'; hIcon = '👁️';
     hDesc  = 'Outward horizontal deviation detected (temporal deviation).';
-    hCardClass = 'exo'; hResultClass = 'result-exo';
+    hCardCls = 'exo'; hResCls = 'result-exo';
   } else if (dx_norm <= T2_DX) {
-    hClass = 'NORMAL';      hIcon = '✅';
+    hClass = 'NORMAL'; hIcon = '✅';
     hDesc  = 'No significant horizontal deviation detected.';
-    hCardClass = 'norm'; hResultClass = 'result-norm';
+    hCardCls = 'norm'; hResCls = 'result-norm';
   } else {
-    hClass = 'ESOTROPIA';   hIcon = '👁️';
+    hClass = 'ESOTROPIA'; hIcon = '👁️';
     hDesc  = 'Inward horizontal deviation detected (nasal deviation).';
-    hCardClass = 'eso'; hResultClass = 'result-eso';
+    hCardCls = 'eso'; hResCls = 'result-eso';
   }
 
-  /* -------------------------------------------------------
-     VERTICAL CLASSIFICATION
-  ------------------------------------------------------- */
-  let vClass, vIcon, vDesc, vCardClass, vResultClass;
+  /* ── Step 7: Vertical classification ───────────────────────── */
+  let vClass, vIcon, vDesc, vCardCls, vResCls;
   if (abs_dy <= T_DY) {
-    vClass = 'NORMAL';    vIcon = '✅';
+    vClass = 'NORMAL'; vIcon = '✅';
     vDesc  = 'No significant vertical deviation detected.';
-    vCardClass = 'norm'; vResultClass = 'result-norm';
+    vCardCls = 'norm'; vResCls = 'result-norm';
   } else if (dy_norm > 0) {
-    // dy > 0 means the deviated eye is higher → Hypertropia
     vClass = 'HYPERTROPIA'; vIcon = '⬆️';
     vDesc  = 'Upward vertical deviation detected.';
-    vCardClass = 'hyper'; vResultClass = 'result-hyper';
+    vCardCls = 'hyper'; vResCls = 'result-hyper';
   } else {
-    vClass = 'HYPOTROPIA';  vIcon = '⬇️';
+    vClass = 'HYPOTROPIA'; vIcon = '⬇️';
     vDesc  = 'Downward vertical deviation detected.';
-    vCardClass = 'hypo'; vResultClass = 'result-hypo';
+    vCardCls = 'hypo'; vResCls = 'result-hypo';
   }
 
-  /* -------------------------------------------------------
-     DRAW LANDMARKS ON PREVIEW
-  ------------------------------------------------------- */
+  /* ── Step 8: Draw landmarks on preview canvas ──────────────── */
   const ctx = previewCanvas.getContext('2d');
-  const W = previewCanvas.width;
-  const H = previewCanvas.height;
+  const W   = previewCanvas.width;
+  const H   = previewCanvas.height;
 
-  // redraw original image (FaceMesh may have modified context)
-  // landmarks only — overlay dots and lines
-  const landmarks = [L_outer, L_inner, L_upper, L_lower, L_pupil,
-                     R_outer, R_inner, R_upper, R_lower, R_pupil];
-  const colors    = ['#4fffb0','#4fffb0','#4fffb0','#4fffb0','#ff6b6b',
-                     '#6b9fff','#6b9fff','#6b9fff','#6b9fff','#ff6b6b'];
-  const labels    = ['L_out','L_in','L_up','L_lo','L_pup',
-                     'R_out','R_in','R_up','R_lo','R_pup'];
+  // Redraw original image cleanly first
+  if (originalImage) ctx.drawImage(originalImage, 0, 0);
 
-  landmarks.forEach((pt, i) => {
-    const x = pt.x * W;
-    const y = pt.y * H;
+  // Draw RAW (pre-rotation) landmarks as small dots
+  const rawPts   = [raw.L_outer, raw.L_inner, raw.L_upper, raw.L_lower, raw.L_pupil,
+                    raw.R_outer, raw.R_inner, raw.R_upper, raw.R_lower, raw.R_pupil];
+  const ptColors = ['#4fffb0','#4fffb0','#4fffb0','#4fffb0','#ff6b6b',
+                    '#6b9fff','#6b9fff','#6b9fff','#6b9fff','#ff6b6b'];
+  const ptLabels = ['L_out','L_in','L_up','L_lo','L_pup',
+                    'R_out','R_in','R_up','R_lo','R_pup'];
+
+  rawPts.forEach((pt, i) => {
+    const x = pt.x * W, y = pt.y * H;
     ctx.beginPath();
     ctx.arc(x, y, i === 4 || i === 9 ? 5 : 3, 0, 2 * Math.PI);
-    ctx.fillStyle = colors[i];
+    ctx.fillStyle = ptColors[i];
     ctx.fill();
     ctx.font = 'bold 10px DM Mono, monospace';
-    ctx.fillStyle = colors[i];
-    ctx.fillText(labels[i], x + 6, y - 4);
+    ctx.fillStyle = ptColors[i];
+    ctx.fillText(ptLabels[i], x + 6, y - 4);
   });
 
-  // eye width lines
+  // Eye width reference lines (using raw coords)
   ctx.strokeStyle = 'rgba(79,255,176,0.5)';
   ctx.lineWidth = 1.5;
   ctx.setLineDash([4, 3]);
   ctx.beginPath();
-  ctx.moveTo(L_outer.x * W, L_outer.y * H);
-  ctx.lineTo(L_inner.x * W, L_inner.y * H);
+  ctx.moveTo(raw.L_outer.x * W, raw.L_outer.y * H);
+  ctx.lineTo(raw.L_inner.x * W, raw.L_inner.y * H);
   ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(R_inner.x * W, R_inner.y * H);
-  ctx.lineTo(R_outer.x * W, R_outer.y * H);
+  ctx.moveTo(raw.R_inner.x * W, raw.R_inner.y * H);
+  ctx.lineTo(raw.R_outer.x * W, raw.R_outer.y * H);
   ctx.stroke();
 
-  // pupil connecting line
+  // Pupil-to-pupil connecting line
   ctx.strokeStyle = 'rgba(255,107,107,0.6)';
   ctx.setLineDash([6, 4]);
   ctx.beginPath();
-  ctx.moveTo(L_pupil.x * W, L_pupil.y * H);
-  ctx.lineTo(R_pupil.x * W, R_pupil.y * H);
+  ctx.moveTo(raw.L_pupil.x * W, raw.L_pupil.y * H);
+  ctx.lineTo(raw.R_pupil.x * W, raw.R_pupil.y * H);
   ctx.stroke();
   ctx.setLineDash([]);
 
-  /* -------------------------------------------------------
-     UPDATE UI
-  ------------------------------------------------------- */
+  // Tilt angle arc indicator at L_outer
+  ctx.strokeStyle = 'rgba(255,209,102,0.8)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(raw.L_outer.x * W, raw.L_outer.y * H, 22, 0, -theta, theta >= 0);
+  ctx.stroke();
+
+  /* ── Step 9: Update UI ─────────────────────────────────────── */
   // Horizontal
-  document.getElementById('classifyCard').className  = `classify-card ${hCardClass}`;
-  document.getElementById('classifyIcon').textContent  = hIcon;
-  document.getElementById('classifyResult').textContent = hClass;
-  document.getElementById('classifyResult').className   = `classify-result ${hResultClass}`;
-  document.getElementById('classifyDesc').textContent   = hDesc;
+  document.getElementById('classifyCard').className      = `classify-card ${hCardCls}`;
+  document.getElementById('classifyIcon').textContent     = hIcon;
+  document.getElementById('classifyResult').textContent   = hClass;
+  document.getElementById('classifyResult').className     = `classify-result ${hResCls}`;
+  document.getElementById('classifyDesc').textContent     = hDesc;
 
   // Vertical
-  document.getElementById('classifyCardV').className  = `classify-card ${vCardClass}`;
-  document.getElementById('classifyIconV').textContent  = vIcon;
-  document.getElementById('classifyResultV').textContent = vClass;
-  document.getElementById('classifyResultV').className   = `classify-result ${vResultClass}`;
-  document.getElementById('classifyDescV').textContent   = vDesc;
+  document.getElementById('classifyCardV').className      = `classify-card ${vCardCls}`;
+  document.getElementById('classifyIconV').textContent    = vIcon;
+  document.getElementById('classifyResultV').textContent  = vClass;
+  document.getElementById('classifyResultV').className    = `classify-result ${vResCls}`;
+  document.getElementById('classifyDescV').textContent    = vDesc;
 
-  // Metrics
+  // Rotation
+  document.getElementById('thetaVal').textContent = `θ = ${thetaDeg.toFixed(3)}°`;
+
+  // Deviation metrics
   document.getElementById('leftVal').textContent  = left_norm_x.toFixed(4);
   document.getElementById('rightVal').textContent = right_norm_x.toFixed(4);
   document.getElementById('dxVal').textContent    = dx_norm.toFixed(4);
-  document.getElementById('leftPy').textContent   = L_pupil.y.toFixed(4);
-  document.getElementById('rightPy').textContent  = R_pupil.y.toFixed(4);
+  document.getElementById('dyRaw').textContent    = dy.toFixed(4);
+  document.getElementById('yRef').textContent     = y_ref.toFixed(4);
   document.getElementById('dyVal').textContent    = abs_dy.toFixed(4);
 
-  // Landmark coords
+  // Rotated coords
   document.getElementById('lmLeft').innerHTML =
-    `outer: (${L_outer.x.toFixed(3)}, ${L_outer.y.toFixed(3)})<br>` +
-    `inner: (${L_inner.x.toFixed(3)}, ${L_inner.y.toFixed(3)})<br>` +
-    `pupil: (${L_pupil.x.toFixed(3)}, ${L_pupil.y.toFixed(3)})`;
+    `outer: (${r.L_outer.x.toFixed(4)}, ${r.L_outer.y.toFixed(4)})<br>` +
+    `inner: (${r.L_inner.x.toFixed(4)}, ${r.L_inner.y.toFixed(4)})<br>` +
+    `upper: (${r.L_upper.x.toFixed(4)}, ${r.L_upper.y.toFixed(4)})<br>` +
+    `lower: (${r.L_lower.x.toFixed(4)}, ${r.L_lower.y.toFixed(4)})<br>` +
+    `pupil: (${r.L_pupil.x.toFixed(4)}, ${r.L_pupil.y.toFixed(4)})`;
 
   document.getElementById('lmRight').innerHTML =
-    `outer: (${R_outer.x.toFixed(3)}, ${R_outer.y.toFixed(3)})<br>` +
-    `inner: (${R_inner.x.toFixed(3)}, ${R_inner.y.toFixed(3)})<br>` +
-    `pupil: (${R_pupil.x.toFixed(3)}, ${R_pupil.y.toFixed(3)})`;
+    `outer: (${r.R_outer.x.toFixed(4)}, ${r.R_outer.y.toFixed(4)})<br>` +
+    `inner: (${r.R_inner.x.toFixed(4)}, ${r.R_inner.y.toFixed(4)})<br>` +
+    `upper: (${r.R_upper.x.toFixed(4)}, ${r.R_upper.y.toFixed(4)})<br>` +
+    `lower: (${r.R_lower.x.toFixed(4)}, ${r.R_lower.y.toFixed(4)})<br>` +
+    `pupil: (${r.R_pupil.x.toFixed(4)}, ${r.R_pupil.y.toFixed(4)})`;
 
   resultsSection.style.display = 'block';
 }
