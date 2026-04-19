@@ -24,8 +24,7 @@
     --exo: #ff6b6b;
     --normal: #4fffb0;
     --eso: #6b9fff;
-    --hyper: #ffd166;
-    --hypo: #c77dff;
+    --vert: #ffd166;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -128,19 +127,16 @@
   .classify-result { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; }
   .classify-desc { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
 
-  .classify-card.exo   { border-color: var(--exo);    }
-  .classify-card.norm  { border-color: var(--normal);  }
-  .classify-card.eso   { border-color: var(--eso);     }
-  .classify-card.hyper { border-color: var(--hyper);   }
-  .classify-card.hypo  { border-color: var(--hypo);    }
+  .classify-card.exo  { border-color: var(--exo);    }
+  .classify-card.norm { border-color: var(--normal);  }
+  .classify-card.eso  { border-color: var(--eso);     }
+  .classify-card.vert { border-color: var(--vert);    }
 
-  .result-exo   { color: var(--exo);    }
-  .result-norm  { color: var(--normal); }
-  .result-eso   { color: var(--eso);    }
-  .result-hyper { color: var(--hyper);  }
-  .result-hypo  { color: var(--hypo);   }
+  .result-exo  { color: var(--exo);    }
+  .result-norm { color: var(--normal); }
+  .result-eso  { color: var(--eso);    }
+  .result-vert { color: var(--vert);   }
 
-  /* Rotation info card */
   .rot-card {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 10px; padding: 16px 20px; margin-bottom: 16px;
@@ -267,7 +263,7 @@
         <div class="card-label">Vertical Deviation (|dy_norm|)</div>
         <div class="metric-row">
           <div class="metric">
-            <div class="metric-name">dy (px·norm)</div>
+            <div class="metric-name">dy (norm)</div>
             <div class="metric-val" id="dyRaw">–</div>
           </div>
           <div class="metric">
@@ -284,7 +280,7 @@
 
     <!-- Rotated landmark coords -->
     <div class="lm-card" style="margin-bottom:16px;">
-      <div class="card-label">Rotated Landmark Coordinates (image px, post-correction)</div>
+      <div class="card-label">Rotated Landmark Coordinates (normalised, post-correction)</div>
       <div class="lm-grid">
         <div class="lm-item">
           <div class="lm-eye">LEFT EYE (rotated)</div>
@@ -301,15 +297,15 @@
     <div class="thresh-card">
       <div class="thresh-title">Classification Rules</div>
 
-      <div class="thresh-section-label">HORIZONTAL (dx_norm)</div>
+      <div class="thresh-section-label">HORIZONTAL (dx_norm) — 3 classes · accuracy 87.20%</div>
       <div class="thresh-row">
         <div class="thresh-dot" style="background:var(--exo)"></div>
-        <div class="thresh-rule">dx_norm &lt; -0.1519</div>
+        <div class="thresh-rule">dx_norm &lt; −0.1519</div>
         <div class="thresh-class result-exo">Exotropia</div>
       </div>
       <div class="thresh-row">
         <div class="thresh-dot" style="background:var(--normal)"></div>
-        <div class="thresh-rule">-0.1519 ≤ dx_norm ≤ 0.0484</div>
+        <div class="thresh-rule">−0.1519 ≤ dx_norm ≤ 0.0484</div>
         <div class="thresh-class result-norm">Normal</div>
       </div>
       <div class="thresh-row">
@@ -318,21 +314,16 @@
         <div class="thresh-class result-eso">Esotropia</div>
       </div>
 
-      <div class="thresh-section-label">VERTICAL (|dy_norm|)</div>
+      <div class="thresh-section-label">VERTICAL (|dy_norm|) — 2 classes · accuracy 80.00%</div>
       <div class="thresh-row">
         <div class="thresh-dot" style="background:var(--normal)"></div>
         <div class="thresh-rule">|dy_norm| ≤ 0.1160</div>
         <div class="thresh-class result-norm">Normal</div>
       </div>
       <div class="thresh-row">
-        <div class="thresh-dot" style="background:var(--hyper)"></div>
-        <div class="thresh-rule">|dy_norm| &gt; 0.1160 and dy &gt; 0</div>
-        <div class="thresh-class result-hyper">Hypertropia</div>
-      </div>
-      <div class="thresh-row">
-        <div class="thresh-dot" style="background:var(--hypo)"></div>
-        <div class="thresh-rule">|dy_norm| &gt; 0.1160 and dy &lt; 0</div>
-        <div class="thresh-class result-hypo">Hypotropia</div>
+        <div class="thresh-dot" style="background:var(--vert)"></div>
+        <div class="thresh-rule">|dy_norm| &gt; 0.1160</div>
+        <div class="thresh-class result-vert">Vertical Strabismus</div>
       </div>
     </div>
 
@@ -342,14 +333,14 @@
 <script>
 /* ================================================================
    LANDMARK INDICES — MediaPipe Face Mesh (refineLandmarks: true)
-   Total 478 landmarks. Iris centres at 468 (left) and 473 (right).
+   Total 478 landmarks when refineLandmarks is enabled.
 
-   Corresponds to offline Python annotation:
-     L_outer → 33   | R_outer → 263
-     L_inner → 133  | R_inner → 362
-     L_upper → 159  | R_upper → 386
-     L_lower → 145  | R_lower → 374
-     L_pupil → 468  | R_pupil → 473  (iris centre, needs refineLandmarks)
+   Corresponds to offline Python manual annotation scheme:
+     L_outer → 33   | R_outer → 263   (outer canthus)
+     L_inner → 133  | R_inner → 362   (inner canthus)
+     L_upper → 159  | R_upper → 386   (upper eyelid)
+     L_lower → 145  | R_lower → 374   (lower eyelid)
+     L_pupil → 468  | R_pupil → 473   (iris centre — needs refineLandmarks)
 ================================================================ */
 const IDX = {
   L_outer: 33,  L_inner: 133, L_upper: 159, L_lower: 145, L_pupil: 468,
@@ -357,42 +348,47 @@ const IDX = {
 };
 
 /* ================================================================
-   THRESHOLDS — derived from offline Gaussian / Gamma log-likelihood
+   THRESHOLDS
+   Derived from offline Gaussian log-likelihood (horizontal) and
+   Gamma log-likelihood (vertical) analysis on 484 labelled images.
+
+   Horizontal (dx_norm) — 3 classes:
+     T1 = -0.1519  (Exotropia | Normal boundary)
+     T2 =  0.0484  (Normal | Esotropia boundary)
+     Overall accuracy: 87.20%
+
+   Vertical (|dy_norm|) — 2 classes:
+     T  =  0.1160  (Normal | Vertical Strabismus boundary)
+     Overall accuracy: 80.00%
+
+   Vertical strabismus is not further subdivided into hypertropia /
+   hypotropia because the geometry-based reference eye determination
+   is insufficiently reliable for that distinction.
 ================================================================ */
-const T1_DX = -0.1519;   // Exotropia | Normal
-const T2_DX =  0.0484;   // Normal    | Esotropia
-const T_DY  =  0.1160;   // Normal    | Vertical strabismus
+const T1_DX = -0.1519;
+const T2_DX =  0.0484;
+const T_DY  =  0.1160;
 
 /* ================================================================
    ROTATION HELPERS
-   Mirrors the Python offline pipeline:
+   Mirrors cv2.getRotationMatrix2D + warpAffine in offline pipeline.
 
-     theta = atan2(R_outer.y - L_outer.y, R_outer.x - L_outer.x)
-     M     = 2×3 affine rotation matrix around image centre
-     p_rot = M · [px, py, 1]^T
+   theta = atan2(R_outer.y − L_outer.y, R_outer.x − L_outer.x)
+   All landmark coordinates are in normalised [0,1] space.
+   Rotation centre = (0.5, 0.5) — image centre in normalised coords.
 ================================================================ */
 
-/**
- * Build a 2×3 affine rotation matrix (same as cv2.getRotationMatrix2D).
- * angle in radians, cx/cy = image centre in normalised [0,1] coords.
- */
+/** Build 2×3 affine counter-rotation matrix about (cx, cy). */
 function buildRotationMatrix(angle, cx, cy) {
-  const cos = Math.cos(-angle);   // negative: we counter-rotate
+  const cos = Math.cos(-angle);
   const sin = Math.sin(-angle);
-  // M = [ cos  -sin  tx ]
-  //     [ sin   cos  ty ]
-  // tx = (1-cos)*cx + sin*cy
-  // ty = -sin*cx + (1-cos)*cy
   return [
     [ cos, -sin, (1 - cos) * cx + sin * cy ],
     [ sin,  cos, -sin * cx + (1 - cos) * cy ],
   ];
 }
 
-/**
- * Apply 2×3 affine matrix M to point (px, py).
- * Returns { x, y } in the same coordinate space.
- */
+/** Apply 2×3 matrix M to point (px, py). */
 function rotatePoint(px, py, M) {
   return {
     x: M[0][0] * px + M[0][1] * py + M[0][2],
@@ -408,7 +404,7 @@ const faceMesh = new FaceMesh({
 });
 faceMesh.setOptions({
   maxNumFaces: 1,
-  refineLandmarks: true,           // required for iris centres 468 / 473
+  refineLandmarks: true,
   minDetectionConfidence: 0.5,
   minTrackingConfidence: 0.5,
 });
@@ -425,9 +421,7 @@ const processingOverlay = document.getElementById('processingOverlay');
 const resultsSection    = document.getElementById('results-section');
 const errorBanner       = document.getElementById('errorBanner');
 const resetBtn          = document.getElementById('resetBtn');
-
-/* keep original image for redraw */
-let originalImage = null;
+let   originalImage     = null;
 
 /* ================================================================
    IMAGE UPLOAD
@@ -441,20 +435,18 @@ imageInput.addEventListener('change', e => {
     previewCanvas.width  = img.naturalWidth;
     previewCanvas.height = img.naturalHeight;
     previewCanvas.getContext('2d').drawImage(img, 0, 0);
-
     uploadZone.style.display     = 'none';
     previewSection.style.display = 'block';
     resultsSection.style.display = 'none';
     errorBanner.classList.remove('show');
     processingOverlay.classList.add('show');
-
     await faceMesh.send({ image: img });
   };
   img.src = URL.createObjectURL(file);
 });
 
-uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('active'); });
-uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('active'));
+uploadZone.addEventListener('dragover',  e => { e.preventDefault(); uploadZone.classList.add('active'); });
+uploadZone.addEventListener('dragleave', ()  => uploadZone.classList.remove('active'));
 uploadZone.addEventListener('drop', e => {
   e.preventDefault(); uploadZone.classList.remove('active');
   const file = e.dataTransfer.files[0];
@@ -471,7 +463,7 @@ resetBtn.addEventListener('click', () => {
   resultsSection.style.display = 'none';
   errorBanner.classList.remove('show');
   imageInput.value = '';
-  originalImage = null;
+  originalImage    = null;
 });
 
 /* ================================================================
@@ -487,11 +479,11 @@ function onResults(results) {
 
   const lm = results.multiFaceLandmarks[0];
   if (lm.length < 478) {
-    showError('Iris landmarks unavailable (need refineLandmarks). Ensure both eyes are visible.');
+    showError('Iris landmarks unavailable. Ensure refineLandmarks is enabled and both eyes are fully visible.');
     return;
   }
 
-  /* ── Step 1: Extract raw normalised landmark coordinates ──────── */
+  /* ── Step 1: Extract raw normalised coordinates ─────────────── */
   const raw = {
     L_outer: lm[IDX.L_outer], L_inner: lm[IDX.L_inner],
     L_upper: lm[IDX.L_upper], L_lower: lm[IDX.L_lower],
@@ -501,29 +493,24 @@ function onResults(results) {
     R_pupil: lm[IDX.R_pupil],
   };
 
-  /* ── Step 2: Compute head tilt angle θ ───────────────────────── */
-  // theta = atan2(R_outer.y - L_outer.y, R_outer.x - L_outer.x)
-  // Coordinates are normalised [0,1]; rotation centre = image centre (0.5, 0.5)
-  const theta = Math.atan2(
+  /* ── Step 2: Head tilt angle θ ──────────────────────────────── */
+  const theta    = Math.atan2(
     raw.R_outer.y - raw.L_outer.y,
     raw.R_outer.x - raw.L_outer.x
   );
   const thetaDeg = theta * 180 / Math.PI;
 
-  /* ── Step 3: Build rotation matrix & rotate all landmarks ─────── */
+  /* ── Step 3: Rotation correction ────────────────────────────── */
   const M = buildRotationMatrix(theta, 0.5, 0.5);
-
   const r = {};
   for (const key of Object.keys(raw)) {
     r[key] = rotatePoint(raw[key].x, raw[key].y, M);
   }
-  // r.* now holds rotation-corrected normalised coordinates
 
-  /* ── Step 4: Compute dx_norm (horizontal) ──────────────────────
-     Mirrors compute_features() in Python:
-       left_norm_x  = (L_pupil.x - L_outer.x) / (L_inner.x - L_outer.x)
-       right_norm_x = (R_pupil.x - R_inner.x) / (R_outer.x - R_inner.x)
-       dx_norm      = left_norm_x - right_norm_x
+  /* ── Step 4: dx_norm (horizontal deviation) ─────────────────
+     left_norm_x  = (L_pupil.x − L_outer.x) / (L_inner.x − L_outer.x)
+     right_norm_x = (R_pupil.x − R_inner.x) / (R_outer.x − R_inner.x)
+     dx_norm      = left_norm_x − right_norm_x
   ─────────────────────────────────────────────────────────────── */
   const eye_width_L  = r.L_inner.x - r.L_outer.x;
   const eye_width_R  = r.R_outer.x - r.R_inner.x;
@@ -531,65 +518,68 @@ function onResults(results) {
   const right_norm_x = (r.R_pupil.x - r.R_inner.x) / eye_width_R;
   const dx_norm      = left_norm_x - right_norm_x;
 
-  /* ── Step 5: Compute dy_norm (vertical) ────────────────────────
-     Mirrors compute_vertical_feature() in Python:
-       dist_L = |L_pupil.y - L_outer.y|
-       dist_R = |R_pupil.y - R_outer.y|
-       if dist_L < dist_R: dy = R_pupil.y - L_pupil.y
-       else:               dy = L_pupil.y - R_pupil.y
-       y_ref   = ((L_lower.y - L_upper.y) + (R_lower.y - R_upper.y)) / 2
-       dy_norm = dy / y_ref
+  /* ── Step 5: dy_norm (vertical deviation) ───────────────────
+     dist_L = |L_pupil.y − L_outer.y|
+     dist_R = |R_pupil.y − R_outer.y|
+     if dist_L < dist_R : dy = R_pupil.y − L_pupil.y
+     else               : dy = L_pupil.y − R_pupil.y
+     y_ref   = ((L_lower.y − L_upper.y) + (R_lower.y − R_upper.y)) / 2
+     dy_norm = dy / y_ref
   ─────────────────────────────────────────────────────────────── */
-  const dist_L = Math.abs(r.L_pupil.y - r.L_outer.y);
-  const dist_R = Math.abs(r.R_pupil.y - r.R_outer.y);
-  const dy     = dist_L < dist_R
-                   ? r.R_pupil.y - r.L_pupil.y
-                   : r.L_pupil.y - r.R_pupil.y;
-  const y_ref  = ((r.L_lower.y - r.L_upper.y) + (r.R_lower.y - r.R_upper.y)) / 2;
+  const dist_L  = Math.abs(r.L_pupil.y - r.L_outer.y);
+  const dist_R  = Math.abs(r.R_pupil.y - r.R_outer.y);
+  const dy      = dist_L < dist_R
+                    ? r.R_pupil.y - r.L_pupil.y
+                    : r.L_pupil.y - r.R_pupil.y;
+  const y_ref   = ((r.L_lower.y - r.L_upper.y) + (r.R_lower.y - r.R_upper.y)) / 2;
   const dy_norm = dy / y_ref;
   const abs_dy  = Math.abs(dy_norm);
 
-  /* ── Step 6: Horizontal classification ─────────────────────── */
+  /* ── Step 6: Horizontal classification ──────────────────────── */
   let hClass, hIcon, hDesc, hCardCls, hResCls;
   if (dx_norm < T1_DX) {
-    hClass = 'EXOTROPIA'; hIcon = '👁️';
+    hClass = 'EXOTROPIA';
+    hIcon  = '👁️';
     hDesc  = 'Outward horizontal deviation detected (temporal deviation).';
     hCardCls = 'exo'; hResCls = 'result-exo';
   } else if (dx_norm <= T2_DX) {
-    hClass = 'NORMAL'; hIcon = '✅';
+    hClass = 'NORMAL';
+    hIcon  = '✅';
     hDesc  = 'No significant horizontal deviation detected.';
     hCardCls = 'norm'; hResCls = 'result-norm';
   } else {
-    hClass = 'ESOTROPIA'; hIcon = '👁️';
+    hClass = 'ESOTROPIA';
+    hIcon  = '👁️';
     hDesc  = 'Inward horizontal deviation detected (nasal deviation).';
     hCardCls = 'eso'; hResCls = 'result-eso';
   }
 
-  /* ── Step 7: Vertical classification ───────────────────────── */
+  /* ── Step 7: Vertical classification (2 classes only) ───────
+     Hypertropia and hypotropia are merged into a single
+     "Vertical Strabismus" class because the geometry-based
+     reference-eye identification is insufficiently reliable
+     to distinguish upward from downward deviation.
+  ─────────────────────────────────────────────────────────────── */
   let vClass, vIcon, vDesc, vCardCls, vResCls;
   if (abs_dy <= T_DY) {
-    vClass = 'NORMAL'; vIcon = '✅';
+    vClass = 'NORMAL';
+    vIcon  = '✅';
     vDesc  = 'No significant vertical deviation detected.';
     vCardCls = 'norm'; vResCls = 'result-norm';
-  } else if (dy_norm > 0) {
-    vClass = 'HYPERTROPIA'; vIcon = '⬆️';
-    vDesc  = 'Upward vertical deviation detected.';
-    vCardCls = 'hyper'; vResCls = 'result-hyper';
   } else {
-    vClass = 'HYPOTROPIA'; vIcon = '⬇️';
-    vDesc  = 'Downward vertical deviation detected.';
-    vCardCls = 'hypo'; vResCls = 'result-hypo';
+    vClass = 'VERTICAL STRABISMUS';
+    vIcon  = '↕️';
+    vDesc  = 'Vertical deviation detected (hypertropia or hypotropia).';
+    vCardCls = 'vert'; vResCls = 'result-vert';
   }
 
-  /* ── Step 8: Draw landmarks on preview canvas ──────────────── */
+  /* ── Step 8: Draw landmarks on preview canvas ───────────────── */
   const ctx = previewCanvas.getContext('2d');
   const W   = previewCanvas.width;
   const H   = previewCanvas.height;
 
-  // Redraw original image cleanly first
   if (originalImage) ctx.drawImage(originalImage, 0, 0);
 
-  // Draw RAW (pre-rotation) landmarks as small dots
   const rawPts   = [raw.L_outer, raw.L_inner, raw.L_upper, raw.L_lower, raw.L_pupil,
                     raw.R_outer, raw.R_inner, raw.R_upper, raw.R_lower, raw.R_pupil];
   const ptColors = ['#4fffb0','#4fffb0','#4fffb0','#4fffb0','#ff6b6b',
@@ -608,7 +598,7 @@ function onResults(results) {
     ctx.fillText(ptLabels[i], x + 6, y - 4);
   });
 
-  // Eye width reference lines (using raw coords)
+  // Eye width lines
   ctx.strokeStyle = 'rgba(79,255,176,0.5)';
   ctx.lineWidth = 1.5;
   ctx.setLineDash([4, 3]);
@@ -621,7 +611,7 @@ function onResults(results) {
   ctx.lineTo(raw.R_outer.x * W, raw.R_outer.y * H);
   ctx.stroke();
 
-  // Pupil-to-pupil connecting line
+  // Pupil connecting line
   ctx.strokeStyle = 'rgba(255,107,107,0.6)';
   ctx.setLineDash([6, 4]);
   ctx.beginPath();
@@ -630,32 +620,28 @@ function onResults(results) {
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Tilt angle arc indicator at L_outer
+  // Tilt indicator arc
   ctx.strokeStyle = 'rgba(255,209,102,0.8)';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.arc(raw.L_outer.x * W, raw.L_outer.y * H, 22, 0, -theta, theta >= 0);
   ctx.stroke();
 
-  /* ── Step 9: Update UI ─────────────────────────────────────── */
-  // Horizontal
-  document.getElementById('classifyCard').className      = `classify-card ${hCardCls}`;
-  document.getElementById('classifyIcon').textContent     = hIcon;
-  document.getElementById('classifyResult').textContent   = hClass;
-  document.getElementById('classifyResult').className     = `classify-result ${hResCls}`;
-  document.getElementById('classifyDesc').textContent     = hDesc;
+  /* ── Step 9: Update UI ──────────────────────────────────────── */
+  document.getElementById('classifyCard').className     = `classify-card ${hCardCls}`;
+  document.getElementById('classifyIcon').textContent    = hIcon;
+  document.getElementById('classifyResult').textContent  = hClass;
+  document.getElementById('classifyResult').className    = `classify-result ${hResCls}`;
+  document.getElementById('classifyDesc').textContent    = hDesc;
 
-  // Vertical
-  document.getElementById('classifyCardV').className      = `classify-card ${vCardCls}`;
-  document.getElementById('classifyIconV').textContent    = vIcon;
-  document.getElementById('classifyResultV').textContent  = vClass;
-  document.getElementById('classifyResultV').className    = `classify-result ${vResCls}`;
-  document.getElementById('classifyDescV').textContent    = vDesc;
+  document.getElementById('classifyCardV').className    = `classify-card ${vCardCls}`;
+  document.getElementById('classifyIconV').textContent   = vIcon;
+  document.getElementById('classifyResultV').textContent = vClass;
+  document.getElementById('classifyResultV').className   = `classify-result ${vResCls}`;
+  document.getElementById('classifyDescV').textContent   = vDesc;
 
-  // Rotation
   document.getElementById('thetaVal').textContent = `θ = ${thetaDeg.toFixed(3)}°`;
 
-  // Deviation metrics
   document.getElementById('leftVal').textContent  = left_norm_x.toFixed(4);
   document.getElementById('rightVal').textContent = right_norm_x.toFixed(4);
   document.getElementById('dxVal').textContent    = dx_norm.toFixed(4);
@@ -663,7 +649,6 @@ function onResults(results) {
   document.getElementById('yRef').textContent     = y_ref.toFixed(4);
   document.getElementById('dyVal').textContent    = abs_dy.toFixed(4);
 
-  // Rotated coords
   document.getElementById('lmLeft').innerHTML =
     `outer: (${r.L_outer.x.toFixed(4)}, ${r.L_outer.y.toFixed(4)})<br>` +
     `inner: (${r.L_inner.x.toFixed(4)}, ${r.L_inner.y.toFixed(4)})<br>` +
